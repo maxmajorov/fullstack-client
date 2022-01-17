@@ -1,16 +1,25 @@
 import React from "react";
 
-function Rating(props: any) {
+type RatingPropsType = {
+  value: 0 | 1 | 2 | 3 | 4 | 5; // можно написать number
+  title: string;
+};
+
+function Rating(props: RatingPropsType) {
   return (
     <div>
-      <RatingTitle />
+      <RatingTitle titleArticle={props.title} />
       <RatingBody value={props.value} />
     </div>
   );
 }
 
-function RatingTitle() {
-  return <h3>MENU</h3>;
+type RatingTitlePropsType = {
+  titleArticle: string;
+};
+
+function RatingTitle(props: RatingTitlePropsType) {
+  return <h3>{props.titleArticle}</h3>;
 }
 
 function RatingBody(props: any) {
@@ -80,7 +89,11 @@ function RatingBody(props: any) {
   );
 }
 
-function RatingStar(props: any) {
+type StarPropsType = {
+  selected: boolean; //true | false
+};
+
+function RatingStar(props: StarPropsType) {
   if (props.selected === true) {
     return (
       <span>
