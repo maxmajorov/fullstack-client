@@ -3,23 +3,21 @@ import "./App.css";
 import Rating from "./components/Rating/Rating";
 import Accordion from "./components/Accordion/Accordion";
 
-function App() {
+const App = () => {
   return (
     <div>
       <PageTitle title={"My first React App with TypeScript"} />
-      <PageTitle title={"Second page"} />
-      <Accordion titleValue={"Accordion-1"} collapsed={true} />
-
-      <Accordion titleValue={"Accordion-2"} collapsed={false} />
-      <Rating value={0} title={"Article 1"} />
-      <Rating value={1} title={"Article 2"} />
-      <Rating value={2} title={"Article 3"} />
-      <Rating value={3} title={"Article 4"} />
-      <Rating value={4} title={"Article 5"} />
-      <Rating value={5} title={"Article 6"} />
+      <Accordion title={"Accordion-1"} collapsed={true} />
+      <Accordion title={"Accordion-2"} />
+      <Rating value={0} />
+      <Rating value={1} />
+      <Rating value={2} />
+      <Rating value={3} />
+      <Rating value={4} />
+      <Rating value={5} />
     </div>
   );
-}
+};
 
 type PageTitlePropsType = {
   title: string;
