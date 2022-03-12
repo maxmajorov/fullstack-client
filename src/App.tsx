@@ -1,20 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
-import Rating from "./components/Rating/Rating";
+import Rating, { RatingValuesType } from "./components/Rating/Rating";
 import Accordion from "./components/Accordion/Accordion";
+import UncontrolledAccordion from "./components/UncontrolledAccordion/Accordion";
+import UncontrolledRating from "./components/UncontrolledRating/Rating";
+import Uncontrolled_ON_OFF from "./components/Uncontrolled-onOff/Uncontrol_ON_OFF";
+import Controlled_ON_OFF from "./components/Controlled-onOff/Uncontrol_ON_OFF";
 
 const App = () => {
+  const [ratingVal, setRatingVal] = useState<number>(0);
+  const [accordion, setAccordion] = useState<boolean>(false);
+  const [on, setOn] = useState<boolean>(true);
+
   return (
     <div>
-      <PageTitle title={"My first React App with TypeScript"} />
-      <Accordion title={"Accordion-1"} collapsed={true} />
-      <Accordion title={"Accordion-2"} />
-      <Rating value={0} />
-      <Rating value={1} />
-      <Rating value={2} />
-      <Rating value={3} />
-      <Rating value={4} />
-      <Rating value={5} />
+      <PageTitle title={"Training React with TypeScript"} />
+      <Accordion
+        title={"Controlled accordion"}
+        collapsed={accordion}
+        setAccordion={setAccordion}
+      />
+      <UncontrolledAccordion />
+      <Rating value={ratingVal} onClick={setRatingVal} />
+      <UncontrolledRating />
+      <Uncontrolled_ON_OFF />
+      <Controlled_ON_OFF setOn={setOn} current={on} />
     </div>
   );
 };
