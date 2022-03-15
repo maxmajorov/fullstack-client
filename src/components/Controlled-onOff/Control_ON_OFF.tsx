@@ -2,7 +2,7 @@ import React from "react";
 
 type ControlONPropsType = {
   current: boolean;
-  setOn: (current: boolean) => void;
+  onChange: (current: boolean) => void;
 };
 
 const Controlled_ON_OFF: React.FC<ControlONPropsType> = (props) => {
@@ -32,10 +32,10 @@ const Controlled_ON_OFF: React.FC<ControlONPropsType> = (props) => {
     <div>
       <h1>useState - Controlled ON_OFF</h1>
       <div>
-        <button style={onButtonStyle} onClick={() => props.setOn(true)}>
+        <button style={onButtonStyle} onClick={() => props.onChange(true)}>
           ON
         </button>
-        <button style={offButtonStyle} onClick={() => props.setOn(false)}>
+        <button style={offButtonStyle} onClick={() => props.onChange(false)}>
           OFF
         </button>
         <button style={circleStyle}></button>

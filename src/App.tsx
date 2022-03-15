@@ -5,12 +5,14 @@ import Accordion from "./components/Accordion/Accordion";
 import UncontrolledAccordion from "./components/UncontrolledAccordion/Accordion";
 import UncontrolledRating from "./components/UncontrolledRating/Rating";
 import Uncontrolled_ON_OFF from "./components/Uncontrolled-onOff/Uncontrol_ON_OFF";
-import Controlled_ON_OFF from "./components/Controlled-onOff/Uncontrol_ON_OFF";
+import Controlled_ON_OFF from "./components/Controlled-onOff/Control_ON_OFF";
 
 const App = () => {
   const [ratingVal, setRatingVal] = useState<number>(0);
   const [accordion, setAccordion] = useState<boolean>(false);
-  const [on, setOn] = useState<boolean>(true);
+  const [switchOn, setSwitchOn] = useState<boolean>(true);
+
+  console.log(switchOn);
 
   return (
     <div>
@@ -23,8 +25,8 @@ const App = () => {
       <UncontrolledAccordion />
       <Rating value={ratingVal} onClick={setRatingVal} />
       <UncontrolledRating />
-      <Uncontrolled_ON_OFF />
-      <Controlled_ON_OFF setOn={setOn} current={on} />
+      <Uncontrolled_ON_OFF onChangeSwitch={setSwitchOn} /> {switchOn.toString()}
+      <Controlled_ON_OFF onChange={setSwitchOn} current={switchOn} />
     </div>
   );
 };

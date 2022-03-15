@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 
-const Uncontrolled_ON_OFF = () => {
+type UncontrolOnPropsType = {
+  onChangeSwitch: (switchOn: boolean) => void;
+};
+
+const Uncontrolled_ON_OFF: React.FC<UncontrolOnPropsType> = (props) => {
   const [on, setOn] = useState(false);
 
   const onClick_ON_Handler = () => {
@@ -10,6 +14,8 @@ const Uncontrolled_ON_OFF = () => {
   const onClick_OFF_Handler = () => {
     setOn(false);
   };
+
+  // on ? props.onChangeSwitch(true) : props.onChangeSwitch(false); //позволяет получить контроль
 
   const onButtonStyle = {
     height: "30px",
@@ -21,7 +27,6 @@ const Uncontrolled_ON_OFF = () => {
     height: "30px",
     width: "100px",
     backgroundColor: on ? "white" : "red",
-
     marginRight: "20px",
   };
 
