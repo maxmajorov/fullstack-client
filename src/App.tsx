@@ -1,42 +1,56 @@
-import React, { useState } from "react";
-import "./App.css";
-import Rating, { RatingValuesType } from "./components/Rating/Rating";
-import Accordion from "./components/Accordion/Accordion";
-import UncontrolledAccordion from "./components/UncontrolledAccordion/Accordion";
-import UncontrolledRating from "./components/UncontrolledRating/Rating";
-import Uncontrolled_ON_OFF from "./components/Uncontrolled-onOff/Uncontrol_ON_OFF";
-import Controlled_ON_OFF from "./components/Controlled-onOff/Control_ON_OFF";
+import React, { useEffect } from "react";
+import axios from "axios";
+import { useAppDispatch, useAppSelector } from "./store/store";
+import { getPostsTC, updatePostTC } from "./store/app-reducer";
 
-const App = () => {
-  const [ratingVal, setRatingVal] = useState<number>(0);
-  const [accordion, setAccordion] = useState<boolean>(false);
-  const [switchOn, setSwitchOn] = useState<boolean>(true);
+// Types
+export type PostType = {
+  body: string;
+  id: number;
+  title: string;
+  userId: number;
+};
 
-  console.log(switchOn);
+// Api
+const instance = axios.create({
+  baseURL: "https://jsonplaceholder.typicode.com/",
+});
+
+export const postsAPI = {
+  getPosts() {
+    return instance.get<PostType[]>("posts?_limit=15");
+  },
+  updatePostTitle(post: PostType) {
+    return instance.put<PostType>(`posts/${post.id}`, post);
+  },
+};
+
+// App
+export const App = () => {
+  const dispatch = useAppDispatch();
+  const posts = useAppSelector((state) => state.posts);
+
+  useEffect(() => {
+    dispatch(getPostsTC());
+  }, []);
+
+  const updatePostHandler = (postId: number) => {
+    dispatch(updatePostTC(postId));
+  };
 
   return (
-    <div>
-      <PageTitle title={"Training React with TypeScript"} />
-      <Accordion
-        title={"Controlled accordion"}
-        collapsed={accordion}
-        setAccordion={setAccordion}
-      />
-      <UncontrolledAccordion />
-      <Rating value={ratingVal} onClick={setRatingVal} />
-      <UncontrolledRating />
-      <Uncontrolled_ON_OFF onChangeSwitch={setSwitchOn} /> {switchOn.toString()}
-      <Controlled_ON_OFF onChange={setSwitchOn} current={switchOn} />
-    </div>
+    <>
+      <h1>📜 Список постов</h1>
+      {posts.map((p) => {
+        return (
+          <div key={p.id}>
+            <b>title</b>: {p.title}
+            <button onClick={() => updatePostHandler(p.id)}>
+              Обновить пост
+            </button>
+          </div>
+        );
+      })}
+    </>
   );
 };
-
-type PageTitlePropsType = {
-  title: string;
-};
-
-function PageTitle(props: PageTitlePropsType) {
-  return <h1>{props.title}</h1>;
-}
-
-export default App;
