@@ -1,5 +1,5 @@
 import React from "react";
-import socialLogo from "../../assets/img/social-logo.png";
+import socialLogo from "../../../assets/img/social-logo.png";
 import classes from "./Header.module.css";
 
 export const Header: React.FC = () => {

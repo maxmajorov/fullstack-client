@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
+import classes from "./InsertUsers.module.scss";
 // import { useParams } from "react-router-dom";
 
 export const InsertUsers = () => {
@@ -66,7 +67,7 @@ export const InsertUsers = () => {
   };
 
   return (
-    <div>
+    <div className={classes.usersContainer}>
       <label>Search: </label>
       <input value={searchValue} type="text" onChange={searchHandler} />
       <button onClick={sendRequestHandler}>send</button>

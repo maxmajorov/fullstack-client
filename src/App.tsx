@@ -3,8 +3,8 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Chat } from "./components/chat/Chat";
 import { InsertUsers } from "./components/insertUsers/InsertUsers";
-import { Sidebar } from "./components/sidebar/Sidebar";
-import { Header } from "./components/header/Header";
+import { Header } from "./components/common/header/Header";
+import { Sidebar } from "./components/common/sidebar/Sidebar";
 
 export const App = () => {
   return (
