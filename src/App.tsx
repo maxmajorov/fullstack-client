@@ -1,56 +1,96 @@
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
-import { useAppDispatch, useAppSelector } from "./store/store";
-import { getPostsTC, updatePostTC } from "./store/app-reducer";
+// import { useParams } from "react-router-dom";
 
-// Types
-export type PostType = {
-  body: string;
-  id: number;
-  title: string;
-  userId: number;
-};
-
-// Api
-const instance = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com/",
-});
-
-export const postsAPI = {
-  getPosts() {
-    return instance.get<PostType[]>("posts?_limit=15");
-  },
-  updatePostTitle(post: PostType) {
-    return instance.put<PostType>(`posts/${post.id}`, post);
-  },
-};
-
-// App
 export const App = () => {
-  const dispatch = useAppDispatch();
-  const posts = useAppSelector((state) => state.posts);
+  const [data, setData] = useState<
+    { _id: string; name: string; age: string }[]
+  >([]);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [userAge, setUserAge] = useState<string>("");
+
+  // const search = useParams();
+
+  const getUsers = (searchValue: string) => {
+    axios
+      .get(`http://localhost:3010/users` + window.location.search)
+      .then((response) => {
+        setData(response.data);
+      });
+  };
 
   useEffect(() => {
-    dispatch(getPostsTC());
-  }, []);
+    getUsers(searchValue);
+  }, [searchValue]);
 
-  const updatePostHandler = (postId: number) => {
-    dispatch(updatePostTC(postId));
+  const sendRequestHandler = () => {
+    if (window.location.search === "") {
+      window.location.search += "search=" + searchValue;
+    } else {
+      if (window.location.search.includes("search")) {
+        window.location.search = "search=" + searchValue;
+      } else window.location.search += "&" + "search=" + searchValue;
+    }
+  };
+
+  const searchHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.currentTarget.value);
+  };
+
+  const nameHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.currentTarget.value);
+  };
+
+  const ageHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserAge(e.currentTarget.value);
+  };
+
+  // ==== REQUESTS ====
+  const updateRequest = (userID: string) => {
+    axios
+      .put(`http://localhost:3010/users/${userID}`, { name: "Max", age: 15 })
+      .then((response) => getUsers(searchValue));
+  };
+
+  const addUserRequest = () => {
+    axios
+      .post("http://localhost:3010/users", { name: userName, age: userAge })
+      .then((response) => getUsers(searchValue));
+  };
+
+  const deleteRequest = (userID: string) => {
+    axios
+      .delete(`http://localhost:3010/users/${userID}`)
+      .then((response) => getUsers(searchValue));
   };
 
   return (
-    <>
-      <h1>📜 Список постов</h1>
-      {posts.map((p) => {
-        return (
-          <div key={p.id}>
-            <b>title</b>: {p.title}
-            <button onClick={() => updatePostHandler(p.id)}>
-              Обновить пост
-            </button>
+    <div>
+      <label>Search: </label>
+      <input value={searchValue} type="text" onChange={searchHandler} />
+      <button onClick={sendRequestHandler}>send</button>
+      <hr />
+      <form onSubmit={addUserRequest}>
+        <label>Name: </label>
+        <input value={userName} type="text" onChange={nameHandler} />
+        <label>Age: </label>
+        <input value={userAge} type="text" onChange={ageHandler} />
+        <button>add user</button>
+      </form>
+      {data ? (
+        data.map((user) => (
+          <div key={user._id} style={{ margin: "10px" }}>
+            <div style={{ display: "inline" }}>
+              <b>Name:</b> {user.name}, {user.age}
+            </div>
+            <button onClick={() => updateRequest(user._id)}>upd</button>
+            <button onClick={() => deleteRequest(user._id)}>x</button>
           </div>
-        );
-      })}
-    </>
+        ))
+      ) : (
+        <div>Users not found</div>
+      )}
+    </div>
   );
 };
