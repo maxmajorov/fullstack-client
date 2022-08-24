@@ -1,0 +1,37 @@
+.sidebar {
+  grid-area: sidebar;
+  margin-top: 20px;
+}
+
+.item {
+  padding-top: 20px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  letter-spacing: 1px;
+}
+
+.active {
+  display: flex;
+  align-items: center;
+  padding: 8px 0px 8px 20px;
+  color: #51a6e2;
+  background-color: #c5d9e9;
+  border-radius: 7px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.active svg {
+  fill: currentColor;
+}
+
+svg {
+  margin-right: 20px;
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+

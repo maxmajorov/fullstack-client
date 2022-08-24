@@ -1,1 +1,28 @@
+body {
+    font-family: 'Raleway', sans-serif;
+    color: rgb(71, 71, 71);
+    background-color: #edeef0;
+  }
+  
+a {
+    color: #1890ff
+}
 
+.container {
+    display: grid;
+  
+    grid-template-areas:
+      "header header header"
+      "sidebar main main";
+    grid-template-rows: 65px 5fr;
+    grid-template-columns: 2fr 10fr;
+  
+    max-width: 1260px;
+    height: 100vh;
+    margin: 0 auto;
+   
+  }
+  
+  .conatiner-content {
+    grid-area: main;
+  }
