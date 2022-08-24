@@ -1,6 +1,10 @@
 .chatContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     margin: 20px 0px 20px 30px;
     padding: 0 50px;
+    height: 85vh;
 
     .message {
         display: flex;
@@ -69,22 +73,22 @@
         }
     }
 
+    .messageInput {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &>textarea {
+            width: 80%;
+        }
+
+        button {
+            width: 150px;
+            height: 35px;
+            background-color: #228be6;
+            border-radius: 5px;
+        }
+      
+    }
+
 }
-
-
-
-  
-  
-  
- 
-  
-  
-  
-
-  
-  .time {
-    padding-left: 10px;
-    padding-top: 40px;
-    color: rgba(0, 0, 0, 0.37);
-  }
-  
