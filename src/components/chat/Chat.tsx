@@ -1,21 +1,41 @@
-import React, { ChangeEvent, useState } from "react";
+import axios from "axios";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import defaultAva from "../../assets/img/def-image.png";
 import classes from "./Chat.module.scss";
 
+const chatSocket = io("http://localhost:3009", {
+  path: "/chat/",
+});
+console.log(chatSocket);
+
 export const Chat = () => {
-  const [messages, setMessages] = useState([
-    { _id: 1, message: "Hello", user: { id: 1, name: "Max" } },
-    { _id: 2, message: "Hi, Max!", user: { id: 2, name: "Olga" } },
-  ]);
+  const [messages, setMessages] = useState<Array<any>>([]);
   const [newMessage, setNewMessage] = useState<string>("");
 
   const myID = 1;
+
+  // socket
+
+  // useEffect(() => {
+  //   const chatSocket = io("http://localhost:3009", { path: "/chat" });
+  //   console.log(chatSocket);
+  // }, []);
+
+  useEffect(() => {
+    chatSocket.on("init-message-published", (mes) => {
+      setMessages(mes);
+    });
+  }, []);
 
   const changeMessageHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.currentTarget.value);
   };
 
-  const sendMessageHandler = () => {};
+  const sendMessageHandler = () => {
+    chatSocket.emit("client-message-send", newMessage);
+    setNewMessage("");
+  };
 
   return (
     <div className={classes.chatContainer}>
@@ -42,10 +62,10 @@ export const Chat = () => {
           </div>
         ))}
       </div>
-      <form onSubmit={sendMessageHandler} className={classes.messageInput}>
+      <div className={classes.messageInput}>
         <textarea value={newMessage} onChange={changeMessageHandler} />
-        <button>Send</button>
-      </form>
+        <button onClick={sendMessageHandler}>Send</button>
+      </div>
     </div>
   );
 };
