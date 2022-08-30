@@ -10,6 +10,7 @@ const chatSocket = io("http://localhost:3009", {
 console.log(chatSocket);
 
 export const Chat = () => {
+  const [name, setName] = useState<string>("");
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newMessage, setNewMessage] = useState<string>("");
 
@@ -35,6 +36,17 @@ export const Chat = () => {
     });
   }, [messages]);
 
+  // add new user
+  const changeNameHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.currentTarget.value);
+  };
+
+  const setNewUser = () => {
+    chatSocket.emit("set-new-user", name);
+    setName("");
+  };
+
+  // send messages
   const changeMessageHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.currentTarget.value);
   };
@@ -45,34 +57,41 @@ export const Chat = () => {
   };
 
   return (
-    <div className={classes.chatContainer}>
-      <div>
-        {messages.map((mes) => (
-          <div
-            key={mes._id}
-            className={
-              mes.user.id === myID
-                ? `${classes.message} ${classes.message_left}`
-                : `${classes.message} ${classes.message_right}`
-            }
-          >
-            <img src={defaultAva} className={classes.avatar} alt="avatar" />
-            <div className={classes.messageItem}>
-              <div className={classes.nameMessage}>
-                <span className={classes.name}>{mes.user.name}</span>
-                <span className={classes.item}>{mes.message}</span>
-              </div>
-              <div className={classes.time}>
-                {new Date().toLocaleTimeString()}
+    <>
+      <div style={{ paddingTop: "20px", textAlign: "center" }}>
+        <input value={name} onChange={changeNameHandler} />
+        <button onClick={setNewUser}>add user</button>
+      </div>
+
+      <div className={classes.chatContainer}>
+        <div>
+          {messages.map((mes) => (
+            <div
+              key={mes._id}
+              className={
+                mes.user.id === myID
+                  ? `${classes.message} ${classes.message_left}`
+                  : `${classes.message} ${classes.message_right}`
+              }
+            >
+              <img src={defaultAva} className={classes.avatar} alt="avatar" />
+              <div className={classes.messageItem}>
+                <div className={classes.nameMessage}>
+                  <span className={classes.name}>{mes.user.name}</span>
+                  <span className={classes.item}>{mes.message}</span>
+                </div>
+                <div className={classes.time}>
+                  {new Date().toLocaleTimeString()}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className={classes.messageInput}>
+          <textarea value={newMessage} onChange={changeMessageHandler} />
+          <button onClick={sendMessageHandler}>Send</button>
+        </div>
       </div>
-      <div className={classes.messageInput}>
-        <textarea value={newMessage} onChange={changeMessageHandler} />
-        <button onClick={sendMessageHandler}>Send</button>
-      </div>
-    </div>
+    </>
   );
 };
