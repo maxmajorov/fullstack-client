@@ -23,10 +23,17 @@ export const Chat = () => {
   // }, []);
 
   useEffect(() => {
+    chatSocket.on("greeting", (mes) => {
+      console.log(mes);
+    });
     chatSocket.on("init-message-published", (mes) => {
       setMessages(mes);
     });
-  }, []);
+
+    chatSocket.on("new-message-send", (newMes) => {
+      setMessages([...messages, newMes]);
+    });
+  }, [messages]);
 
   const changeMessageHandler = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setNewMessage(event.currentTarget.value);
