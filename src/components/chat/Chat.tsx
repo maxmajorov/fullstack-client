@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import defaultAva from "../../assets/img/def-image.png";
@@ -6,6 +5,8 @@ import {
   destroyConnectionTC,
   createConnectionTC,
   messagesSelect,
+  setClientNameTC,
+  sendMessageTC,
 } from "../../bll/reducers/chat-reducer";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import classes from "./Chat.module.scss";
@@ -17,34 +18,19 @@ console.log(chatSocket);
 
 export const Chat = () => {
   const [name, setName] = useState<string>("");
-  const [messages, setMessages] = useState<Array<any>>([]);
   const [newMessage, setNewMessage] = useState<string>("");
 
   const dispatch = useAppDispatch();
-  // const messages = useAppSelector(messagesSelect)
+  const messages = useAppSelector(messagesSelect);
 
   const myID = 1;
 
   // socket
 
   useEffect(() => {
-    // chatSocket.on("greeting", (mes) => {
-    //   console.log(mes);
-    // });
-    // chatSocket.on("init-message-published", (mes) => {
-    //   setMessages(mes);
-    // });
-
-    // chatSocket.on("new-message-send", (newMes) => {
-    //   setMessages([...messages, newMes]);
-    // });
-
     // craete connection then component mount
-
     dispatch(createConnectionTC());
-
     // close connection then component unmount
-
     return () => {
       dispatch(destroyConnectionTC());
     };
@@ -62,7 +48,7 @@ export const Chat = () => {
   };
 
   const setNewUser = () => {
-    chatSocket.emit("set-new-user", name);
+    dispatch(setClientNameTC(name));
     setName("");
   };
 
@@ -72,7 +58,7 @@ export const Chat = () => {
   };
 
   const sendMessageHandler = () => {
-    chatSocket.emit("client-message-send", newMessage);
+    dispatch(sendMessageTC(newMessage));
     setNewMessage("");
   };
 
@@ -89,7 +75,7 @@ export const Chat = () => {
             <div
               key={mes._id}
               className={
-                mes.user.id === myID
+                mes.user._id === myID.toString()
                   ? `${classes.message} ${classes.message_left}`
                   : `${classes.message} ${classes.message_right}`
               }

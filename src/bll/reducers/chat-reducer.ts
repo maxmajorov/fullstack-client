@@ -3,9 +3,17 @@ import { ChatResponseType, chatSocketAPI } from "../../api/chatSocket-api";
 import { AppRootStateType, AppThunk } from "../store";
 // import { appSetStatusAC } from "./app-reducer";
 
-
 const initialState = {
-  messages: ['']
+  messages: [
+    {
+      _id: "",
+      message: "",
+      user: {
+        _id: "",
+        name: "",
+      },
+    },
+  ],
 };
 
 export const chatReducer = (
@@ -17,7 +25,6 @@ export const chatReducer = (
       return {
         ...state,
         messages: action.messages,
-       
       };
     }
 
@@ -25,10 +32,8 @@ export const chatReducer = (
       return {
         ...state,
         messages: [...state.messages, action.newMessage],
-       
       };
     }
-   
 
     default:
       return state;
@@ -37,29 +42,34 @@ export const chatReducer = (
 
 // ==== ACTIONS =====
 
-export const getMessagesAC = (messages: any) =>
+export const getMessagesAC = (messages: ChatResponseType) =>
   ({ type: "CHAT/messages-received", messages } as const);
 
-export const addNewMessageAC = (newMessage: string) =>
+export const addNewMessageAC = (newMessage: ChatResponseType) =>
   ({ type: "CHAT/new-message-received", newMessage } as const);
 
 // ==== THUNKS =====
-
 
 export const createConnectionTC = (): AppThunk => async (dispatch) => {
   try {
     // dispatch(appSetStatusAC("loading"));
     const response = await chatSocketAPI.createConnectionTC();
-
-    // dispatch(getMessagesAC(response.data));
+    chatSocketAPI.subscribe(
+      (messages: any) => {
+        dispatch(getMessagesAC(messages));
+      },
+      (newMessage: any) => {
+        dispatch(addNewMessageAC(newMessage));
+      }
+    );
   } catch (e) {
     const err = e as Error | AxiosError<{ error: string }>;
-    console.log(err)
+    console.log(err);
     // handleNetworkError(dispatch, err);
   } finally {
     // dispatch(appSetStatusAC("idle"));
   }
-}
+};
 
 export const destroyConnectionTC = (): AppThunk => async (dispatch) => {
   try {
@@ -69,33 +79,44 @@ export const destroyConnectionTC = (): AppThunk => async (dispatch) => {
     // dispatch(getMessagesAC(response.data));
   } catch (e) {
     const err = e as Error | AxiosError<{ error: string }>;
-    console.log(err)
+    console.log(err);
     // handleNetworkError(dispatch, err);
   } finally {
     // dispatch(appSetStatusAC("idle"));
   }
-}
+};
 
-export const getMessagesTC =
-  (page: number, pageCount: number): AppThunk =>
+export const setClientNameTC =
+  (name: string): AppThunk =>
   async (dispatch) => {
-    // try {
-    //   // dispatch(appSetStatusAC("loading"));
-    //   const response = await getPacksAPI.getPacksList(page, pageCount);
+    try {
+      // dispatch(appSetStatusAC("loading"));
+      await chatSocketAPI.sendName(name);
+    } catch (e) {
+      const err = e as Error | AxiosError<{ error: string }>;
+      // handleNetworkError(dispatch, err);
+    } finally {
+      // dispatch(appSetStatusAC("idle"));
+    }
+  };
 
-    //   dispatch(getMessagesAC(response.data));
-    // } catch (e) {
-    //   const err = e as Error | AxiosError<{ error: string }>;
-    //   // handleNetworkError(dispatch, err);
-    // } finally {
-    //   // dispatch(appSetStatusAC("idle"));
-    // }
+export const sendMessageTC =
+  (newMessage: string): AppThunk =>
+  async (dispatch) => {
+    try {
+      // dispatch(appSetStatusAC("loading"));
+      await chatSocketAPI.sendMessage(newMessage);
+    } catch (e) {
+      const err = e as Error | AxiosError<{ error: string }>;
+      // handleNetworkError(dispatch, err);
+    } finally {
+      // dispatch(appSetStatusAC("idle"));
+    }
   };
 
 // ==== SELECTORS ====
 
 export const messagesSelect = (state: AppRootStateType) => state.chat.messages;
-
 
 // ==== TYPES ====
 
@@ -105,7 +126,4 @@ export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 export type GetChatMessagesType = ReturnType<typeof getMessagesAC>;
 export type AddNewMessageType = ReturnType<typeof addNewMessageAC>;
 
-
-export type ChatActionsTypes =
-  | GetChatMessagesType
-  | AddNewMessageType
+export type ChatActionsTypes = GetChatMessagesType | AddNewMessageType;
