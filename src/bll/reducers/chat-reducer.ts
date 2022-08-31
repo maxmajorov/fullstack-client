@@ -18,6 +18,7 @@ const initialState = {
       },
     },
   ],
+  userInfo: { _id: "", name: "" },
   typingUsers: [{ _id: "", name: "" }],
 };
 
@@ -53,6 +54,13 @@ export const chatReducer = (
       };
     }
 
+    case "CHAT/set-user-info": {
+      return {
+        ...state,
+        userInfo: action.user,
+      };
+    }
+
     default:
       return state;
   }
@@ -60,7 +68,7 @@ export const chatReducer = (
 
 // ==== ACTIONS =====
 
-export const getMessagesAC = (messages: ChatResponseType) =>
+export const getMessagesAC = (messages: ChatResponseType[]) =>
   ({ type: "CHAT/messages-received", messages } as const);
 
 export const addNewMessageAC = (newMessage: ChatResponseType) =>
@@ -68,6 +76,9 @@ export const addNewMessageAC = (newMessage: ChatResponseType) =>
 
 export const typingUserAC = (user: UserType) =>
   ({ type: "CHAT/set-typing-user", user } as const);
+
+export const setUserInfoAC = (user: UserType) =>
+  ({ type: "CHAT/set-user-info", user } as const);
 
 // ==== THUNKS =====
 
@@ -81,6 +92,9 @@ export const createConnectionTC = (): AppThunk => async (dispatch) => {
       },
       (newMessage: any) => {
         dispatch(addNewMessageAC(newMessage));
+      },
+      (user: UserType) => {
+        dispatch(setUserInfoAC(user));
       },
       (user: UserType) => {
         dispatch(typingUserAC(user));
@@ -115,7 +129,7 @@ export const setClientNameTC =
   async (dispatch) => {
     try {
       // dispatch(appSetStatusAC("loading"));
-      await chatSocketAPI.sendName(name);
+      const response = await chatSocketAPI.sendName(name);
     } catch (e) {
       const err = e as Error | AxiosError<{ error: string }>;
       // handleNetworkError(dispatch, err);
@@ -151,6 +165,8 @@ export const typingTextTC = (): AppThunk => async (dispatch) => {
 export const messagesSelect = (state: AppRootStateType) => state.chat.messages;
 export const typingUsersSelect = (state: AppRootStateType) =>
   state.chat.typingUsers;
+export const userIDSelect = (state: AppRootStateType) =>
+  state.chat.userInfo._id;
 
 // ==== TYPES ====
 
@@ -160,8 +176,10 @@ export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 export type GetChatMessagesType = ReturnType<typeof getMessagesAC>;
 export type AddNewMessageType = ReturnType<typeof addNewMessageAC>;
 export type TypingUserType = ReturnType<typeof typingUserAC>;
+export type SetUserIDType = ReturnType<typeof setUserInfoAC>;
 
 export type ChatActionsTypes =
   | GetChatMessagesType
   | AddNewMessageType
-  | TypingUserType;
+  | TypingUserType
+  | SetUserIDType;

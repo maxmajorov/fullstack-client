@@ -13,12 +13,12 @@ export const chatSocketAPI = {
   subscribe(
     initMessageHandler: (messages: any) => void,
     newMessageHandler: (newMessage: any) => void,
+    setUserInfoHandler: (user: UserType) => void,
     clientTypingTextHandler: (user: UserType) => void
   ) {
     this.chatSocket?.on("init-message-published", initMessageHandler);
-
     this.chatSocket?.on("new-message-send", newMessageHandler);
-
+    this.chatSocket?.on("send-userInfo-to-client", setUserInfoHandler);
     this.chatSocket?.on("user-typing-text", clientTypingTextHandler);
   },
 

@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { io } from "socket.io-client";
 import defaultAva from "../../assets/img/def-image.png";
 import {
   destroyConnectionTC,
@@ -9,24 +8,20 @@ import {
   sendMessageTC,
   typingTextTC,
   typingUsersSelect,
+  userIDSelect,
 } from "../../bll/reducers/chat-reducer";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import classes from "./Chat.module.scss";
-
-// const chatSocket = io("http://localhost:3009", {
-//   path: "/chat/",
-// });
 
 export const Chat = () => {
   const [name, setName] = useState<string>("");
   const [newMessage, setNewMessage] = useState<string>("");
 
-  const dispatch = useAppDispatch();
   const messages = useAppSelector(messagesSelect);
   const typingUsers = useAppSelector(typingUsersSelect);
+  const userID = useAppSelector(userIDSelect);
 
-  console.log(typingUsers);
-  const myID = 1;
+  const dispatch = useAppDispatch();
 
   // socket
 
@@ -82,9 +77,9 @@ export const Chat = () => {
             <div
               key={mes._id}
               className={
-                mes.user._id === myID.toString()
-                  ? `${classes.message} ${classes.message_left}`
-                  : `${classes.message} ${classes.message_right}`
+                mes.user._id === userID.toString()
+                  ? `${classes.message} ${classes.message_right}`
+                  : `${classes.message} ${classes.message_left}`
               }
             >
               <img src={defaultAva} className={classes.avatar} alt="avatar" />
