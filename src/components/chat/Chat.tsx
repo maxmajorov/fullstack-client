@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import defaultAva from "../../assets/img/def-image.png";
 import classes from "./Chat.module.scss";
@@ -18,11 +18,6 @@ export const Chat = () => {
 
   // socket
 
-  // useEffect(() => {
-  //   const chatSocket = io("http://localhost:3009", { path: "/chat" });
-  //   console.log(chatSocket);
-  // }, []);
-
   useEffect(() => {
     chatSocket.on("greeting", (mes) => {
       console.log(mes);
@@ -35,6 +30,12 @@ export const Chat = () => {
       setMessages([...messages, newMes]);
     });
   }, [messages]);
+
+  useEffect(() => {
+    messagesAncorRef.current?.scrollIntoView();
+  }, [messages]);
+
+  const messagesAncorRef = useRef<HTMLDivElement>(null);
 
   // add new user
   const changeNameHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +65,7 @@ export const Chat = () => {
       </div>
 
       <div className={classes.chatContainer}>
-        <div>
+        <div className={classes.messagesBlock}>
           {messages.map((mes) => (
             <div
               key={mes._id}
@@ -86,7 +87,9 @@ export const Chat = () => {
               </div>
             </div>
           ))}
+          <div ref={messagesAncorRef}></div>
         </div>
+
         <div className={classes.messageInput}>
           <textarea value={newMessage} onChange={changeMessageHandler} />
           <button onClick={sendMessageHandler}>Send</button>
