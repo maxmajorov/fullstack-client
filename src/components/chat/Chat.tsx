@@ -2,6 +2,12 @@ import axios from "axios";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import defaultAva from "../../assets/img/def-image.png";
+import {
+  destroyConnectionTC,
+  createConnectionTC,
+  messagesSelect,
+} from "../../bll/reducers/chat-reducer";
+import { useAppDispatch, useAppSelector } from "../../bll/store";
 import classes from "./Chat.module.scss";
 
 const chatSocket = io("http://localhost:3009", {
@@ -14,22 +20,35 @@ export const Chat = () => {
   const [messages, setMessages] = useState<Array<any>>([]);
   const [newMessage, setNewMessage] = useState<string>("");
 
+  const dispatch = useAppDispatch();
+  // const messages = useAppSelector(messagesSelect)
+
   const myID = 1;
 
   // socket
 
   useEffect(() => {
-    chatSocket.on("greeting", (mes) => {
-      console.log(mes);
-    });
-    chatSocket.on("init-message-published", (mes) => {
-      setMessages(mes);
-    });
+    // chatSocket.on("greeting", (mes) => {
+    //   console.log(mes);
+    // });
+    // chatSocket.on("init-message-published", (mes) => {
+    //   setMessages(mes);
+    // });
 
-    chatSocket.on("new-message-send", (newMes) => {
-      setMessages([...messages, newMes]);
-    });
-  }, [messages]);
+    // chatSocket.on("new-message-send", (newMes) => {
+    //   setMessages([...messages, newMes]);
+    // });
+
+    // craete connection then component mount
+
+    dispatch(createConnectionTC());
+
+    // close connection then component unmount
+
+    return () => {
+      dispatch(destroyConnectionTC());
+    };
+  }, []);
 
   useEffect(() => {
     messagesAncorRef.current?.scrollIntoView();
