@@ -1,5 +1,9 @@
 import { AxiosError } from "axios";
-import { ChatResponseType, chatSocketAPI } from "../../api/chatSocket-api";
+import {
+  ChatResponseType,
+  chatSocketAPI,
+  UserType,
+} from "../../api/chatSocket-api";
 import { AppRootStateType, AppThunk } from "../store";
 // import { appSetStatusAC } from "./app-reducer";
 
@@ -14,6 +18,7 @@ const initialState = {
       },
     },
   ],
+  typingUsers: [{ _id: "", name: "" }],
 };
 
 export const chatReducer = (
@@ -32,6 +37,19 @@ export const chatReducer = (
       return {
         ...state,
         messages: [...state.messages, action.newMessage],
+        typingUsers: state.typingUsers.filter(
+          (user) => user._id !== action.newMessage.user._id
+        ),
+      };
+    }
+
+    case "CHAT/set-typing-user": {
+      return {
+        ...state,
+        typingUsers: [
+          ...state.typingUsers.filter((user) => user._id !== action.user._id),
+          action.user,
+        ],
       };
     }
 
@@ -48,6 +66,9 @@ export const getMessagesAC = (messages: ChatResponseType) =>
 export const addNewMessageAC = (newMessage: ChatResponseType) =>
   ({ type: "CHAT/new-message-received", newMessage } as const);
 
+export const typingUserAC = (user: UserType) =>
+  ({ type: "CHAT/set-typing-user", user } as const);
+
 // ==== THUNKS =====
 
 export const createConnectionTC = (): AppThunk => async (dispatch) => {
@@ -60,6 +81,9 @@ export const createConnectionTC = (): AppThunk => async (dispatch) => {
       },
       (newMessage: any) => {
         dispatch(addNewMessageAC(newMessage));
+      },
+      (user: UserType) => {
+        dispatch(typingUserAC(user));
       }
     );
   } catch (e) {
@@ -114,9 +138,19 @@ export const sendMessageTC =
     }
   };
 
+export const typingTextTC = (): AppThunk => async (dispatch) => {
+  try {
+    await chatSocketAPI.typingText();
+  } catch (e) {
+    const err = e as Error | AxiosError<{ error: string }>;
+  }
+};
+
 // ==== SELECTORS ====
 
 export const messagesSelect = (state: AppRootStateType) => state.chat.messages;
+export const typingUsersSelect = (state: AppRootStateType) =>
+  state.chat.typingUsers;
 
 // ==== TYPES ====
 
@@ -125,5 +159,9 @@ export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed";
 
 export type GetChatMessagesType = ReturnType<typeof getMessagesAC>;
 export type AddNewMessageType = ReturnType<typeof addNewMessageAC>;
+export type TypingUserType = ReturnType<typeof typingUserAC>;
 
-export type ChatActionsTypes = GetChatMessagesType | AddNewMessageType;
+export type ChatActionsTypes =
+  | GetChatMessagesType
+  | AddNewMessageType
+  | TypingUserType;

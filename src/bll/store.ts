@@ -10,9 +10,8 @@ import { useDispatch } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { ChatActionsTypes, chatReducer } from "./reducers/chat-reducer";
 
-
 let rootReducer = combineReducers({
-  chat: chatReducer
+  chat: chatReducer,
 });
 
 export const store = createStore(
@@ -21,8 +20,7 @@ export const store = createStore(
 );
 
 export type AppRootStateType = ReturnType<typeof rootReducer>;
-export type AppRootActionsType = 
-  | ChatActionsTypes
+export type AppRootActionsType = ChatActionsTypes;
 
 // SELECTOR TYPE
 
@@ -48,5 +46,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 >;
 
 //@ts-ignore
-
 window.store = store;

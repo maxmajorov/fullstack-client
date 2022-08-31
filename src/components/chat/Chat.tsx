@@ -7,14 +7,15 @@ import {
   messagesSelect,
   setClientNameTC,
   sendMessageTC,
+  typingTextTC,
+  typingUsersSelect,
 } from "../../bll/reducers/chat-reducer";
 import { useAppDispatch, useAppSelector } from "../../bll/store";
 import classes from "./Chat.module.scss";
 
-const chatSocket = io("http://localhost:3009", {
-  path: "/chat/",
-});
-console.log(chatSocket);
+// const chatSocket = io("http://localhost:3009", {
+//   path: "/chat/",
+// });
 
 export const Chat = () => {
   const [name, setName] = useState<string>("");
@@ -22,7 +23,9 @@ export const Chat = () => {
 
   const dispatch = useAppDispatch();
   const messages = useAppSelector(messagesSelect);
+  const typingUsers = useAppSelector(typingUsersSelect);
 
+  console.log(typingUsers);
   const myID = 1;
 
   // socket
@@ -62,6 +65,10 @@ export const Chat = () => {
     setNewMessage("");
   };
 
+  const typingTextViewHandler = () => {
+    dispatch(typingTextTC());
+  };
+
   return (
     <>
       <div style={{ paddingTop: "20px", textAlign: "center" }}>
@@ -94,10 +101,20 @@ export const Chat = () => {
           ))}
           <div ref={messagesAncorRef}></div>
         </div>
-
-        <div className={classes.messageInput}>
-          <textarea value={newMessage} onChange={changeMessageHandler} />
-          <button onClick={sendMessageHandler}>Send</button>
+        <div>
+          <div className={classes.messageInput}>
+            <textarea
+              value={newMessage}
+              onChange={changeMessageHandler}
+              onKeyPress={typingTextViewHandler}
+            />
+            <button onClick={sendMessageHandler}>Send</button>
+          </div>
+          {/* {typingUsers.map((user) => (
+            <span key={user._id}>{user.name}</span>
+          ))} */}
+          {typingUsers.length !== 1 &&
+            `${typingUsers.map((user) => user.name).join(" ")} typing...`}
         </div>
       </div>
     </>

@@ -12,11 +12,14 @@ export const chatSocketAPI = {
 
   subscribe(
     initMessageHandler: (messages: any) => void,
-    newMessageHandler: (newMessage: any) => void
+    newMessageHandler: (newMessage: any) => void,
+    clientTypingTextHandler: (user: UserType) => void
   ) {
     this.chatSocket?.on("init-message-published", initMessageHandler);
 
     this.chatSocket?.on("new-message-send", newMessageHandler);
+
+    this.chatSocket?.on("user-typing-text", clientTypingTextHandler);
   },
 
   destroyConnectionTC() {
@@ -25,11 +28,15 @@ export const chatSocketAPI = {
   },
 
   sendName(name: string) {
-    this.chatSocket?.emit("set-new-user", name);
+    this.chatSocket?.emit("client-set-name", name);
   },
 
   sendMessage(newMessage: string) {
     this.chatSocket?.emit("client-message-send", newMessage);
+  },
+
+  typingText() {
+    this.chatSocket?.emit("client-typing-text");
   },
 };
 
@@ -40,11 +47,13 @@ export type eventTypes =
   | "init-message-published"
   | "new-message-send";
 
+export type UserType = {
+  _id: string;
+  name: string;
+};
+
 export type ChatResponseType = {
   _id: string;
   message: string;
-  user: {
-    _id: string;
-    name: string;
-  };
+  user: UserType;
 };
