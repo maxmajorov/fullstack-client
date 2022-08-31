@@ -1,0 +1,26 @@
+.gamesContainer {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0px 20px 30px;
+    padding: 20px 50px;
+    height: 80vh;
+    
+    .gameList {
+        font-size: 20px;
+      
+        .gameItem {
+            cursor: pointer;
+
+            &:hover {
+                color: #228be6;
+            }
+
+            &:not(:last-child) {
+                margin-bottom: 10px;
+            }
+
+        }
+                  
+    }
+
+}
