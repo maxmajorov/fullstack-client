@@ -1,6 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import classes from "./InsertUsers.module.scss";
+import { CreateUserFormModal } from "./createUserForm/CreateUserForm";
+
 // import { useParams } from "react-router-dom";
 
 export const InsertUsers = () => {
@@ -8,6 +10,7 @@ export const InsertUsers = () => {
     { _id: string; name: string; age: string }[]
   >([]);
   const [searchValue, setSearchValue] = useState<string>("");
+  const [open, setOpen] = useState(false);
   const [userName, setUserName] = useState<string>("");
   const [userAge, setUserAge] = useState<string>("");
 
@@ -68,17 +71,16 @@ export const InsertUsers = () => {
 
   return (
     <div className={classes.usersContainer}>
-      <label>Search: </label>
-      <input value={searchValue} type="text" onChange={searchHandler} />
-      <button onClick={sendRequestHandler}>send</button>
+      <>
+        <label>Search: </label>
+        <input value={searchValue} type="text" onChange={searchHandler} />
+        <button onClick={sendRequestHandler}>send</button>
+        <button onClick={() => setOpen(!open)}>Add user</button>
+        <CreateUserFormModal active={open} setActive={setOpen} />
+      </>
+
       <hr />
-      <form onSubmit={addUserRequest}>
-        <label>Name: </label>
-        <input value={userName} type="text" onChange={nameHandler} />
-        <label>Age: </label>
-        <input value={userAge} type="text" onChange={ageHandler} />
-        <button>add user</button>
-      </form>
+
       {data ? (
         data.map((user) => (
           <div key={user._id} style={{ margin: "10px" }}>
