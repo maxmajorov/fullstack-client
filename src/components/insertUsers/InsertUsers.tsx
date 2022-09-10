@@ -2,7 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import classes from "./InsertUsers.module.scss";
 import { CreateUserFormModal } from "./createUserForm/CreateUserForm";
-import { stringify } from "querystring";
+import defaultAva from "../../assets/img/def-image.png";
 
 // import { useParams } from "react-router-dom";
 
@@ -81,21 +81,27 @@ export const InsertUsers = () => {
         <button onClick={() => setOpen(!open)}>Add user</button>
       </>
 
-      <hr />
-
       {userData ? (
-        userData.map((user) => (
-          <div key={user._id} style={{ margin: "10px" }}>
-            <div style={{ display: "inline" }}>
-              <b>First name:</b> {user.firstName}, {user.age}
+        <div className={classes.userList}>
+          {userData.map((user) => (
+            <div key={user._id} className={classes.userItem}>
+              <img src={defaultAva} className={classes.avatar} alt="avatar" />
+              <div className={classes.userInfo}>
+                <div className={classes.userName}>
+                  {user.firstName} {user.lastName}
+                </div>
+                <div>
+                  {user.country}, {user.city}
+                </div>
+                {user.age && <div>Age: {user.age}</div>}
+              </div>
+              <div>
+                <button onClick={() => updateRequest(user._id)}>upd</button>
+                <button onClick={() => deleteRequest(user._id)}>x</button>
+              </div>
             </div>
-            <div style={{ display: "inline" }}>
-              <b>Last name:</b> {user.lastName}
-            </div>
-            <button onClick={() => updateRequest(user._id)}>upd</button>
-            <button onClick={() => deleteRequest(user._id)}>x</button>
-          </div>
-        ))
+          ))}
+        </div>
       ) : (
         <div>Users not found</div>
       )}
@@ -103,7 +109,6 @@ export const InsertUsers = () => {
       <CreateUserFormModal
         active={open}
         setActive={setOpen}
-        // setUserData={setUserData}
         addUserRequest={addUserRequest}
       />
     </div>

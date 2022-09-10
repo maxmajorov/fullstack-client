@@ -6,7 +6,6 @@ import classes from "./CreateUserForm.module.scss";
 type CreateUserFormModalType = {
   active: boolean;
   setActive: (value: boolean) => void;
-  // setUserData: (user: UserType) => void;
   addUserRequest: (newUser: UserType) => void;
 };
 
@@ -57,7 +56,6 @@ export const CreateUserFormModal: React.FC<CreateUserFormModalType> = ({
   });
 
   const sendUserDataHandler = () => {
-    // setUserData(formik.values);
     addUserRequest(formik.values);
     setActive(!active);
   };
