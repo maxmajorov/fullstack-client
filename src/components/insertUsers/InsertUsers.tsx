@@ -9,19 +9,7 @@ import defaultAva from "../../assets/img/def-image.png";
 export const InsertUsers = () => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [userData, setUserData] = useState([
-    {
-      _id: "",
-      firstName: "",
-      lastName: "",
-      age: "",
-      phone: "",
-      email: "",
-      country: "",
-      city: "",
-      street: "",
-    },
-  ]);
+  const [userData, setUserData] = useState<Array<UserResponseType>>([]);
 
   console.log(userData);
 
@@ -81,7 +69,7 @@ export const InsertUsers = () => {
         <button onClick={() => setOpen(!open)}>Add user</button>
       </>
 
-      {userData ? (
+      {userData.length ? (
         <div className={classes.userList}>
           {userData.map((user) => (
             <div key={user._id} className={classes.userItem}>
@@ -118,6 +106,18 @@ export const InsertUsers = () => {
 // ==== TYPES ====
 
 export type UserType = {
+  firstName: string;
+  lastName: string;
+  age?: string;
+  phone?: string;
+  email?: string;
+  country: string;
+  city?: string;
+  street?: string;
+};
+
+export type UserResponseType = {
+  _id: string;
   firstName: string;
   lastName: string;
   age?: string;
