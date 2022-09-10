@@ -2,17 +2,28 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import classes from "./InsertUsers.module.scss";
 import { CreateUserFormModal } from "./createUserForm/CreateUserForm";
+import { stringify } from "querystring";
 
 // import { useParams } from "react-router-dom";
 
 export const InsertUsers = () => {
-  const [data, setData] = useState<
-    { _id: string; name: string; age: string }[]
-  >([]);
   const [searchValue, setSearchValue] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [userName, setUserName] = useState<string>("");
-  const [userAge, setUserAge] = useState<string>("");
+  const [userData, setUserData] = useState([
+    {
+      _id: "",
+      firstName: "",
+      lastName: "",
+      age: "",
+      phone: "",
+      email: "",
+      country: "",
+      city: "",
+      street: "",
+    },
+  ]);
+
+  console.log(userData);
 
   // const search = useParams();
 
@@ -20,7 +31,7 @@ export const InsertUsers = () => {
     axios
       .get(`http://localhost:3010/users` + window.location.search)
       .then((response) => {
-        setData(response.data);
+        setUserData(response.data);
       });
   };
 
@@ -42,14 +53,6 @@ export const InsertUsers = () => {
     setSearchValue(e.currentTarget.value);
   };
 
-  const nameHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserName(e.currentTarget.value);
-  };
-
-  const ageHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    setUserAge(e.currentTarget.value);
-  };
-
   // ==== REQUESTS ====
   const updateRequest = (userID: string) => {
     axios
@@ -57,9 +60,9 @@ export const InsertUsers = () => {
       .then((response) => getUsers(searchValue));
   };
 
-  const addUserRequest = () => {
+  const addUserRequest = (newUser: UserType) => {
     axios
-      .post("http://localhost:3010/users", { name: userName, age: userAge })
+      .post("http://localhost:3010/users", newUser)
       .then((response) => getUsers(searchValue));
   };
 
@@ -76,16 +79,18 @@ export const InsertUsers = () => {
         <input value={searchValue} type="text" onChange={searchHandler} />
         <button onClick={sendRequestHandler}>send</button>
         <button onClick={() => setOpen(!open)}>Add user</button>
-        <CreateUserFormModal active={open} setActive={setOpen} />
       </>
 
       <hr />
 
-      {data ? (
-        data.map((user) => (
+      {userData ? (
+        userData.map((user) => (
           <div key={user._id} style={{ margin: "10px" }}>
             <div style={{ display: "inline" }}>
-              <b>Name:</b> {user.name}, {user.age}
+              <b>First name:</b> {user.firstName}, {user.age}
+            </div>
+            <div style={{ display: "inline" }}>
+              <b>Last name:</b> {user.lastName}
             </div>
             <button onClick={() => updateRequest(user._id)}>upd</button>
             <button onClick={() => deleteRequest(user._id)}>x</button>
@@ -94,6 +99,26 @@ export const InsertUsers = () => {
       ) : (
         <div>Users not found</div>
       )}
+
+      <CreateUserFormModal
+        active={open}
+        setActive={setOpen}
+        // setUserData={setUserData}
+        addUserRequest={addUserRequest}
+      />
     </div>
   );
+};
+
+// ==== TYPES ====
+
+export type UserType = {
+  firstName: string;
+  lastName: string;
+  age?: string;
+  phone?: string;
+  email?: string;
+  country: string;
+  city?: string;
+  street?: string;
 };

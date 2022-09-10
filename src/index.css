@@ -39,3 +39,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+button {
+  padding: 5px 10px;
+  background-color: #228be6;
+  border-radius: 5px;
+}
